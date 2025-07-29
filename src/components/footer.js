@@ -26,7 +26,7 @@ const Footer = () => {
                         <h6 className={footerStyles.footerSubtitle}>Contact Info</h6>
                         <p className={footerStyles.footerText}>
                             Email: help@lostandfound.com<br />
-                            Phone: (555) 123-4567<br />
+                            Phone: (880) 123-456789<br />
                             Available 24/7
                         </p>
                     </Col>
