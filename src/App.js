@@ -6,6 +6,7 @@ import SignUP from './pages/SignUp';
 import Navigation from './components/navigation';
 import Lost from './pages/Lost';
 import Found from './pages/Found';
+import ReportLostItem from './pages/ReportLostItem';
 
 function App() {
   return (
