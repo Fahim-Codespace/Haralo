@@ -8,7 +8,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 const Navigation = () => {
     return ( 
         <div>
-            <Navbar expand="lg" style={{ backgroundColor: '#fcd8cfff' }}>
+            <Navbar expand="lg" style={{ backgroundColor: 'rgb(255, 248, 247)' }}>
   <Container fluid>
     <Navbar.Brand href="#">LOST AND FOUND</Navbar.Brand>
     <Navbar.Toggle aria-controls="navbarScroll" />
@@ -22,7 +22,7 @@ const Navigation = () => {
         <Nav.Link href="#action2">About US</Nav.Link>
         <Nav.Link href="#action2">Profiles</Nav.Link>
 
-        <NavDropdown title="Dashboard?" id="navbarScrollingDropdown">
+        <NavDropdown title="Dashboard" id="navbarScrollingDropdown">
           <NavDropdown.Item href="#action3">FOUND</NavDropdown.Item>
           <NavDropdown.Item href="#action4">LOST</NavDropdown.Item>
         </NavDropdown>
