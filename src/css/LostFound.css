@@ -1,0 +1,125 @@
+/* Main container for posts */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to left, #caffb2, #fff8ff);
+}
+
+.posts-container {
+  flex: 1;
+  max-width: 800px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0;
+}
+
+
+.post-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lost-post {
+  border-left: 4px solid #dc3545;
+}
+
+.found-post {
+  border-left: 4px solid #28a745;
+}
+
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+
+.post-description {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+
+.image-placeholder {
+  height: 200px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Simple buttons */
+.contact-btn, .status-btn {
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .posts-container {
+    padding: 15px;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .profile-pic {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .user-name {
+    font-size: 0.9rem;
+  }
+  
+  .post-description {
+    font-size: 0.85rem;
+  }
+  
+  .image-placeholder {
+    height: 150px;
+  }
+}

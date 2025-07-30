@@ -1,12 +1,13 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import footerStyles from '../css/footer.module.css';
 
 const Footer = () => {
     return (
         <footer className={footerStyles.footer}>
             <Container fluid>
-                <Row className="py-4">
+                <Row className="py-2">
                     <Col md={4}>
                         <h5 className={footerStyles.footerTitle}>Lost and Found</h5>
                         <p className={footerStyles.footerText}>
@@ -16,10 +17,10 @@ const Footer = () => {
                     <Col md={4}>
                         <h6 className={footerStyles.footerSubtitle}>Quick Links</h6>
                         <ul className={footerStyles.footerLinks}>
-                            <li><a href="#home">Home</a></li>
-                            <li><a href="#about">About Us</a></li>
-                            <li><a href="#found">Found Items</a></li>
-                            <li><a href="#lost">Lost Items</a></li>
+                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="/about-us">About Us</Link></li>
+                            <li><Link to="/found">Found Items</Link></li>
+                            <li><Link to="/lost">Lost Items</Link></li>
                         </ul>
                     </Col>
                     <Col md={4}>
