@@ -1,4 +1,5 @@
 import './App.css';
+import AboutUs from './pages/AboutUs';
 
 import Home from './pages/Home';
 
