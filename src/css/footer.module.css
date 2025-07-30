@@ -9,20 +9,20 @@
 .footerTitle {
     color: #000000;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .footerSubtitle {
     color: #495057;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .footerText {
     color: #6c757d;
     font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 10px;
+    line-height: 1.4;
+    margin-bottom: 0px;
 }
 
 .footerLinks {
@@ -32,30 +32,35 @@
 }
 
 .footerLinks li {
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
-.footerLinks a {
+.footerLinks a,
+.footerLinks a:link,
+.footerLinks a:visited {
     color: #6c757d;
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s ease;
 }
 
-.footerLinks a:hover {
+.footerLinks a:hover,
+.footerLinks a:focus {
     color: #d63384;
     text-decoration: underline;
 }
 
 .footerDivider {
     border-color: #f0b8a6;
-    margin: 20px 0 15px 0;
+    margin: 8px 0 5px 0;
 }
 
 .footerCopyright {
     color: #6c757d;
     font-size: 12px;
     margin: 0;
+
+    padding-bottom: 8px;
 }
 
 /* Responsive design */
