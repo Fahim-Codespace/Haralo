@@ -33,7 +33,7 @@ const Navigation = () => {
                                 <NavDropdown.Item as={Link} to="/">Report LOST</NavDropdown.Item>
                             </NavDropdown>
                             
-                            <Nav.Link as={Link} to="/" disabled>SignUp</Nav.Link>
+                            <Nav.Link as={Link} to="/sign-up" >SignUp</Nav.Link>
                         </Nav>
                         <Form className="d-flex">
                             <Form.Control
