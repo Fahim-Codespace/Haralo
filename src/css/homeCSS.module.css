@@ -1,0 +1,74 @@
+
+.pageContainer {
+  min-height: 110vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.gradientArea {
+  flex: 1;
+  background: linear-gradient(to left, #caffb2, #fff8ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centeredContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  max-width: 1000px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.textSection {
+  text-align: left;
+  flex: 1;
+}
+
+.textSection h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.textSection p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.buttonsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.actionBtn {
+  padding: 12px 24px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  transition: 0.2s ease;
+  min-width: 200px;
+  text-align: center;
+}
+
+.lostBtn {
+  background-color: #1f1d1d;
+  font-weight: 600;
+  font-size: x-large;
+}
+
+.foundBtn {
+  background-color: #c3371f;
+  font-weight: 600;
+  font-size: x-large;
+}
+
+.actionBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
