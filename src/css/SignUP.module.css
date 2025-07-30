@@ -1,0 +1,22 @@
+.pageContainer {
+  min-height: 110vh;
+  display: flex;
+  flex-direction: column;
+}
+.gradientArea {
+  flex: 1;
+  background: linear-gradient(to left, #caffb2, #fff8ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centeredContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80px;
+  max-width: 1000px;
+  width: 90%;
+  margin: 0 auto;
+}
