@@ -2,6 +2,7 @@ import React from 'react';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import styles from '../css/homeCSS.module.css';
+import AboutUs from './AboutUs';
 
 function Home() {
   return (
