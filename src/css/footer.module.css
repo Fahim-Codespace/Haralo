@@ -9,6 +9,20 @@
 .footerTitle {
     color: #000000;
     font-weight: bold;
+    /* Responsive design */
+    margin-bottom: 8px;
+}
+/* Footer Styles */
+.footer {
+    background-color: rgb(255, 248, 247);
+    margin-top: auto;
+    color: #333;
+    border-top: 2px solid #8400ff;
+}
+
+.footerTitle {
+    color: #000000;
+    font-weight: bold;
     margin-bottom: 8px;
 }
 
@@ -59,7 +73,6 @@
     color: #6c757d;
     font-size: 12px;
     margin: 0;
-
     padding-bottom: 8px;
 }
 

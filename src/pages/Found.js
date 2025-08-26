@@ -69,7 +69,7 @@ const Found = () => {
             <Col key={post.id} lg={6} md={6} sm={12} className="mb-4">
               <Card className="post-card found-post h-100">
                 <Card.Body className="p-3">
-                  {/* User Info */}
+                  
                   <div className="d-flex align-items-center mb-3">
                     <img 
                       src={post.userPic} 
@@ -79,10 +79,9 @@ const Found = () => {
                     <h6 className="user-name mb-0">{post.userName}</h6>
                   </div>
 
-                  {/* Description */}
+                  
                   <p className="post-description mb-3">{post.description}</p>
 
-            
                   <div className="image-placeholder mb-3">
                     <span>Image</span>
                   </div>
