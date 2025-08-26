@@ -18,14 +18,10 @@ function ReportLostItem(){
         <input type="text" name="name" />
 
         <label>Item :</label>
-        <select name="item">
-          <option>Select Item</option>
-        </select>
+            <input type="text" name="item" />
 
-        <label>Location :</label>
-        <select name="location">
-          <option>Select Location</option>
-        </select>
+      <label>Location :</label>
+            <input type="text" name="location" />
 
         <label>Date :</label>
         <input type="date" name="date" />
