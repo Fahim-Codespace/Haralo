@@ -29,8 +29,8 @@ const Navigation = () => {
                             </NavDropdown>
 
                             <NavDropdown title="Report Something?" id="navbarScrollingDropdown">
-                                <NavDropdown.Item as={Link} to="/">Report FOUND</NavDropdown.Item>
-                                <NavDropdown.Item as={Link} to="/">Report LOST</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/report-found">Report FOUND</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to="/report-lost-item">Report LOST</NavDropdown.Item>
                             </NavDropdown>
                             
                             <Nav.Link as={Link} to="/sign-up" >SignUp</Nav.Link>
