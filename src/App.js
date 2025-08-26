@@ -8,6 +8,7 @@ import Navigation from './components/navigation';
 import Lost from './pages/Lost';
 import Found from './pages/Found';
 import ReportLostItem from './pages/ReportLostItem';
+import ReportFoundItem from './pages/ReportFoundItem';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/lost" element={<Lost />} />
         <Route path="/found" element={<Found />} />
         <Route path="/report-lost-item" element={<ReportLostItem />} />
+        <Route path="/report-found" element={<ReportFoundItem />} />
       </Routes>
     </Router>
   );
