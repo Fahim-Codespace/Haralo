@@ -63,3 +63,57 @@
   color: #444;
   line-height: 1.6;
 }
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .team {
+    gap: 40px;
+  }
+  .aboutus-title {
+    font-size: 2.2rem;
+    margin-bottom: 28px;
+  }
+  .team-img {
+    width: 120px;
+    height: 120px;
+  }
+  .goal {
+    padding: 20px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .aboutus {
+    padding: 20px 0 0 0;
+  }
+  .team {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .aboutus-title {
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+  }
+  .team-img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+  }
+  .team-name {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  .goal {
+    max-width: 98vw;
+    padding: 12px 4px;
+    font-size: 0.95rem;
+  }
+  .goal h2 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .goal p {
+    font-size: 0.95rem;
+  }
+}
