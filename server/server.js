@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDb from './db/connect.js';
 import studentRoutes from './routes/route.js';
 import foundRoutes from './routes/foundRoute.js';
+import lostRoutes from './routes/lostRoute.js';
 
 dotenv.config();
 connectDb();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use('/api/student', studentRoutes);
 app.use('/api/report-found', foundRoutes);
+app.use('/api/report-lost', lostRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
