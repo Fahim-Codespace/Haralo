@@ -21,7 +21,7 @@ const Navigation = () => {
                         >
                             <Nav.Link as={Link} to="/">Home</Nav.Link>
                             <Nav.Link as={Link} to="/about-us">About Us</Nav.Link>
-                            <Nav.Link as={Link} to="/">Profiles</Nav.Link>
+                            <Nav.Link as={Link} to="/profiles">Profiles</Nav.Link>
 
                             <NavDropdown title="Dashboard" id="navbarScrollingDropdown">
                                 <NavDropdown.Item as={Link} to="/lost">LOST</NavDropdown.Item>
