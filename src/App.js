@@ -9,6 +9,7 @@ import Lost from './pages/Lost';
 import Found from './pages/Found';
 import ReportLostItem from './pages/ReportLostItem';
 import ReportFoundItem from './pages/ReportFoundItem';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/found" element={<Found />} />
         <Route path="/report-lost-item" element={<ReportLostItem />} />
         <Route path="/report-found" element={<ReportFoundItem />} />
+        <Route path="/profiles" element={<Profile />} />
       </Routes>
     </Router>
   );
