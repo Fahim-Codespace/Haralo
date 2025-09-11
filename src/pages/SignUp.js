@@ -59,10 +59,10 @@ const SignUP = () => {
 
     return ( 
         <div className={styles.pageContainer}>
-            <Navigation />
+            {/* Navigation removed for unauthenticated signup page */}
             <div className={styles.gradientArea}>
                 <div className={styles.centeredContent}>
-                    <div style={{ maxWidth: '400px', margin: '0 auto', background: 'rgba(255,255,255,0.95)', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', padding: '32px 24px', textAlign: 'center' }}>
+                    <div style={{ width: '480px', minHeight: '340px', margin: '32px auto', background: 'rgba(255,255,255,0.95)', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', padding: '32px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <h2 style={{ marginBottom: '24px', fontWeight: 700, color: '#2c3e50' }}>Sign Up</h2>
                         <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3" controlId="formName">
