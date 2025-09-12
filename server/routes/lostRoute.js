@@ -20,4 +20,13 @@ router.post('/', upload.single('photo'), async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const items = await LostItem.find();
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch lost items.' });
+  }
+});
+
 export default router;
