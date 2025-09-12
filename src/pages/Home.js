@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
@@ -11,8 +10,9 @@ function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    setIsAuthenticated(!!user);
+    // Check for JWT token instead of user object
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
   }, []);
 
   return (
@@ -29,13 +29,13 @@ function Home() {
               <>
                 <button
                   className={`${styles.actionBtn} ${styles.lostBtn}`}
-                  onClick={() => navigate('/report-lost-item')}
+                  onClick={() => navigate('/lost')}
                 >
                   Lost
                 </button>
                 <button
                   className={`${styles.actionBtn} ${styles.foundBtn}`}
-                  onClick={() => navigate('/report-found')}
+                  onClick={() => navigate('/found')}
                 >
                   Found
                 </button>

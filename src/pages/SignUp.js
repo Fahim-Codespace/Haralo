@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import { Link } from "react-router-dom";
 import styles from "../css/SignUP.module.css";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from 'axios'; // ✅ import axios
+import axios from 'axios';
 
 const SignUP = () => {
     const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const SignUP = () => {
     });
 
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -42,10 +44,23 @@ const SignUP = () => {
                 password: formData.password
             });
 
-            setMessage(res.data.message);
+            setMessage(res.data.message || "Signup successful!");
 
             if (res.status === 201) {
                 setFormData({ name: "", institution: "", email: "", password: "", agree: false });
+                
+                // Save JWT token to localStorage
+                if (res.data.token) {
+                    localStorage.setItem('token', res.data.token);
+                }
+                
+                // Save user data to localStorage
+                if (res.data.email) {
+                    localStorage.setItem('userEmail', res.data.email);
+                }
+                
+                // Redirect to profile after successful signup
+                navigate('/profile');
             }
         } catch (err) {
             console.error(err);
@@ -113,6 +128,9 @@ const SignUP = () => {
                                 onChange={handleChange}
                                 required
                             />
+                            <Form.Text className="text-muted">
+                                Use a strong password with at least 8 characters, including uppercase, lowercase, numbers, and symbols.
+                            </Form.Text>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formCheckbox">
@@ -130,7 +148,7 @@ const SignUP = () => {
                         </Button>
                     </Form>
 
-                    {message && <p style={{ marginTop: "10px" }}>{message}</p>}
+                    {message && <p style={{ marginTop: "10px", color: message.includes("successful") ? "green" : "red" }}>{message}</p>}
                     <div style={{ marginTop: "16px" }}>
                         <span>Already have an account? </span>
                         <Link to="/login">Login</Link>

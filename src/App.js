@@ -10,6 +10,7 @@ import Found from './pages/Found';
 import ReportLostItem from './pages/ReportLostItem';
 import ReportFoundItem from './pages/ReportFoundItem';
 import Profile from './pages/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -17,13 +18,35 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/sign-up" element={<SignUP />} />
-          <Route path="/login" element={<Login />} />
-        <Route path="/lost" element={<Lost />} />
-        <Route path="/found" element={<Found />} />
-        <Route path="/report-lost-item" element={<ReportLostItem />} />
-        <Route path="/report-found" element={<ReportFoundItem />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/sign-up" element={<SignUP />} />
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected Routes - Require Authentication */}
+        <Route path="/lost" element={
+          <ProtectedRoute>
+            <Lost />
+          </ProtectedRoute>
+        } />
+        <Route path="/found" element={
+          <ProtectedRoute>
+            <Found />
+          </ProtectedRoute>
+        } />
+        <Route path="/report-lost-item" element={
+          <ProtectedRoute>
+            <ReportLostItem />
+          </ProtectedRoute>
+        } />
+        <Route path="/report-found" element={
+          <ProtectedRoute>
+            <ReportFoundItem />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );

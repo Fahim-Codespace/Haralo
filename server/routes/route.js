@@ -1,18 +1,18 @@
 import express from 'express';
-import { getStudent, createStudent, loginStudent } from '../controllers/studentController.js';
+import { getStudent, createStudent, loginStudent, getStudentByEmail } from '../controllers/studentController.js';
 import { createLostItem, getLostItems } from '../controllers/lostItemController.js';
+import requireAuth from '../middleware/auth.js';
 
 const router = express.Router();
 
-// GET all students
+// Public routes
 router.get('/', getStudent);
-
-// POST /api/student/signup
+router.get('/profile', getStudentByEmail); // Add this line
 router.post('/signup', createStudent);
 router.post('/login', loginStudent);
 
-// Lost item routes
-router.post('/report-lost', createLostItem);
-router.get('/lost-items', getLostItems);
+// Protected routes - require authentication
+router.post('/report-lost', requireAuth, createLostItem);
+router.get('/lost-items', requireAuth, getLostItems);
 
 export default router;
