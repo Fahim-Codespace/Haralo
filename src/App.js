@@ -23,7 +23,7 @@ function App() {
         <Route path="/found" element={<Found />} />
         <Route path="/report-lost-item" element={<ReportLostItem />} />
         <Route path="/report-found" element={<ReportFoundItem />} />
-        <Route path="/profiles" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

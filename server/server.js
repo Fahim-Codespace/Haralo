@@ -16,6 +16,7 @@ app.use(express.json());
 app.use('/api/student', studentRoutes);
 app.use('/api/report-found', foundRoutes);
 app.use('/api/report-lost', lostRoutes);
+app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
