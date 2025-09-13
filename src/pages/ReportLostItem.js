@@ -28,13 +28,28 @@ function ReportLostItem(){
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        data.append(key, value ?? '');
-      });
-      const res = await axios.post('http://localhost:5000/api/report-lost', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      let photoUrl = '';
+      // If a file is selected, upload it to GridFS via server endpoint
+      if (formData.photo) {
+        const uploadForm = new FormData();
+        uploadForm.append('photo', formData.photo);
+        const upResp = await axios.post('http://localhost:5000/api/uploads/gridfs/upload', uploadForm, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        photoUrl = upResp.data.fileUrl;
+      }
+
+      const payload = {
+        name: formData.name,
+        item: formData.item,
+        location: formData.location,
+        date: formData.date,
+        description: formData.description,
+        contact: formData.contact,
+        photo: photoUrl
+      };
+
+      const res = await axios.post('http://localhost:5000/api/report-lost', payload);
       setMessage(res.data.message);
       if (res.status === 201) {
   setFormData({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null });

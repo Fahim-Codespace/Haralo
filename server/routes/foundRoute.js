@@ -16,8 +16,9 @@ router.post('/', upload.single('photo'), async (req, res) => {
       console.error('Could not read FoundItem.schema.paths:', schemaErr);
     }
 
-    const { name, item, location, date, description, contact } = req.body;
-    const photo = req.file ? req.file.filename : null;
+  const { name, item, location, date, description, contact, photo: photoFromBody } = req.body;
+  // photo may arrive either as uploaded file (req.file.filename) or as a URL returned by GridFS (photoFromBody)
+  const photo = photoFromBody || (req.file ? req.file.filename : null);
     const parsedDate = date ? new Date(date) : null;
 
     const foundItem = new FoundItem({

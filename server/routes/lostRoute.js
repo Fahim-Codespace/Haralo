@@ -16,9 +16,10 @@ router.post('/', upload.single('photo'), async (req, res) => {
       console.error('Could not read LostItem.schema.paths:', schemaErr);
     }
 
-    // Normalize and pick fields explicitly
-    const { name, item, location, date, description, contact } = req.body;
-    const photo = req.file ? req.file.filename : null;
+  // Normalize and pick fields explicitly
+  const { name, item, location, date, description, contact, photo: photoFromBody } = req.body;
+  // photo may be a GridFS fileUrl returned by the upload endpoint (e.g. '/api/uploads/gridfs/..')
+  const photo = photoFromBody || (req.file ? req.file.filename : null);
 
     // Coerce date to a Date object if provided as string
     const parsedDate = date ? new Date(date) : null;
