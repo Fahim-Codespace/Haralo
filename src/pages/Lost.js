@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import '../css/LostFound.css';
 
 const Lost = () => {
   const [lostPosts, setLostPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showContact, setShowContact] = useState(false);
+  const [contactInfo, setContactInfo] = useState("");
 
   useEffect(() => {
     fetch('http://localhost:5000/api/report-lost')
@@ -53,6 +55,9 @@ const Lost = () => {
                       <h6 className="user-name mb-0">{post.name}</h6>
                     </div>
 
+                    <h5 className="item-title mb-1">{post.item || 'Item'}</h5>
+                    <div className="mb-2 text-muted small">Location: {post.location || 'Unknown'}</div>
+
                     <p className="post-description mb-3">{post.description}</p>
 
                     <div className="image-placeholder mb-3">
@@ -72,6 +77,10 @@ const Lost = () => {
                         variant="outline-primary" 
                         size="sm"
                         className="contact-btn"
+                        onClick={() => {
+                          setContactInfo(post.contact || "No contact info provided");
+                          setShowContact(true);
+                        }}
                       >
                         Contact
                       </Button>
@@ -92,6 +101,19 @@ const Lost = () => {
       </Container>
 
       <Footer />
+      <Modal show={showContact} onHide={() => setShowContact(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Contact Information</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>{contactInfo}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowContact(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
