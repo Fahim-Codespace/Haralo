@@ -62,11 +62,34 @@ const Found = () => {
 
                     <div className="image-placeholder mb-3">
                       {post.photo ? (
-                        <img
-                          src={`http://localhost:5000/uploads/${post.photo}`}
-                          alt={post.item}
-                          style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '8px' }}
-                        />
+                        (() => {
+                          const p = post.photo;
+                          const apiOrigin = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+                          let src = '';
+                          if (typeof p === 'string') {
+                            if (p.startsWith('http://') || p.startsWith('https://')) {
+                              src = p; // full URL
+                            } else if (p.startsWith('/')) {
+                              // relative path from server root
+                              src = `${apiOrigin}${p}`;
+                            } else if (p.includes('/api/uploads/gridfs/')) {
+                              // gridfs path maybe missing leading slash
+                              src = p.startsWith('/') ? `${apiOrigin}${p}` : `${apiOrigin}/${p}`;
+                            } else {
+                              // legacy filename
+                              src = `${apiOrigin}/uploads/${p}`;
+                            }
+                          }
+
+                          return (
+                            <img
+                              src={src}
+                              alt={post.item}
+                              style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '8px' }}
+                              onError={(e) => { console.warn('Image load failed for', src); e.currentTarget.style.display = 'none'; }}
+                            />
+                          );
+                        })()
                       ) : (
                         <span>No Image</span>
                       )}

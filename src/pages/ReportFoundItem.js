@@ -24,31 +24,39 @@ function ReportFoundItem() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value ?? '');
-    });
-
     try {
+      let photoUrl = '';
+      if (form.photo) {
+        const uploadForm = new FormData();
+        uploadForm.append('photo', form.photo);
+        const upResp = await fetch('http://localhost:5000/api/uploads/gridfs/upload', { method: 'POST', body: uploadForm });
+        const upData = await upResp.json();
+        photoUrl = upData.fileUrl;
+      }
+
+      const payload = {
+        name: form.name,
+        item: form.item,
+        location: form.location,
+        date: form.date,
+        description: form.description,
+        contact: form.contact,
+        photo: photoUrl,
+      };
+
       const res = await fetch('http://localhost:5000/api/report-found', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         alert('Item reported successfully!');
-        setForm({
-          name: '',
-          item: '',
-          location: '',
-          date: '',
-          description: '',
-          contact: '',
-          photo: null,
-        });
+        setForm({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null });
       } else {
         alert('Error reporting item.');
       }
     } catch (err) {
+      console.error(err);
       alert('Server error.');
     }
   };
