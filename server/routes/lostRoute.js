@@ -8,12 +8,60 @@ const upload = multer({ dest: 'uploads/' });
 router.post('/', upload.single('photo'), async (req, res) => {
   try {
     console.log('LostItem POST req.body:', req.body);
-    console.log('LostItem POST req.file:', req.file);
-    const { name, item, location, date, description } = req.body;
+    console.log('LostItem POST req.file:', req.file ? { filename: req.file.filename, originalname: req.file.originalname } : null);
+    // Debug: print schema paths for LostItem
+    try {
+      console.log('LostItem schema paths:', Object.keys(LostItem.schema.paths));
+    } catch (schemaErr) {
+      console.error('Could not read LostItem.schema.paths:', schemaErr);
+    }
+
+    // Normalize and pick fields explicitly
+    const { name, item, location, date, description, contact } = req.body;
     const photo = req.file ? req.file.filename : null;
-    const lostItem = new LostItem({ name, item, location, date, description, photo });
-    await lostItem.save();
-    res.status(201).json({ message: 'Lost item reported successfully!' });
+
+    // Coerce date to a Date object if provided as string
+    const parsedDate = date ? new Date(date) : null;
+
+    const lostItem = new LostItem({
+      name,
+      item,
+      location,
+      date: parsedDate,
+      description,
+      contact,
+      photo,
+    });
+
+    // Debug: inspect the constructed Mongoose document before saving
+    try {
+      console.log('lostItem.contact (variable):', contact, 'type:', typeof contact);
+      console.log('lostItem instance keys:', Object.keys(lostItem.toObject()));
+      console.log('lostItem.toObject():', JSON.stringify(lostItem.toObject(), null, 2));
+    } catch (dbgErr) {
+      console.error('Debug inspect lostItem failed:', dbgErr);
+    }
+
+    // Check schema path for contact
+    try {
+      const contactPath = LostItem.schema && LostItem.schema.path('contact');
+      console.log('LostItem.schema.path("contact") exists:', !!contactPath, contactPath ? contactPath.instance : null);
+    } catch (schemaErr) {
+      console.error('Failed to inspect LostItem schema path for contact:', schemaErr);
+    }
+
+    // If contact somehow didn't get set on the instance, set it explicitly
+    if (typeof lostItem.contact === 'undefined') {
+      lostItem.contact = contact;
+      console.log('Manually assigned lostItem.contact ->', lostItem.contact);
+    }
+
+    console.log('After assignment, lostItem.get("contact") =', lostItem.get('contact'));
+
+    const saved = await lostItem.save();
+    // Log the saved document as JSON for clarity
+    console.log('Saved LostItem:', JSON.stringify(saved, null, 2));
+    return res.status(201).json({ message: 'Lost item reported successfully!', lostItem: saved });
   } catch (error) {
     console.error('LostItem POST error:', error);
     res.status(500).json({ error: 'Failed to report lost item.' });
@@ -23,6 +71,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const items = await LostItem.find();
+    console.log('GET LostItems returning:', items.slice(-5));
     res.json(items);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch lost items.' });

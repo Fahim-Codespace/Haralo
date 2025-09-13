@@ -10,6 +10,7 @@ function ReportFoundItem() {
     location: '',
     date: '',
     description: '',
+    contact: '',
     photo: null,
   });
 
@@ -25,7 +26,7 @@ function ReportFoundItem() {
     e.preventDefault();
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
+      formData.append(key, value ?? '');
     });
 
     try {
@@ -41,6 +42,7 @@ function ReportFoundItem() {
           location: '',
           date: '',
           description: '',
+          contact: '',
           photo: null,
         });
       } else {
@@ -72,8 +74,12 @@ function ReportFoundItem() {
             <label>Date :</label>
             <input type="date" name="date" value={form.date} onChange={handleChange} />
 
-            <label>Item Description :</label>
-            <textarea name="description" value={form.description} onChange={handleChange}></textarea>
+
+      <label>Item Description :</label>
+      <textarea name="description" value={form.description} onChange={handleChange}></textarea>
+
+      <label>Contact Info :</label>
+      <input type="text" name="contact" value={form.contact} onChange={handleChange} placeholder="Enter your phone, email, etc." required />
 
             <label>Upload Photo :</label>
             <input type="file" name="photo" onChange={handleChange} />
@@ -81,7 +87,7 @@ function ReportFoundItem() {
 
             <div className="button-group">
               <button type="submit" className="submit-btn">Submit</button>
-              <button type="reset" className="reset-btn">Reset</button>
+              <button type="reset" className="reset-btn" onClick={() => setForm({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null })}>Reset</button>
             </div>
           </form>
         </div>

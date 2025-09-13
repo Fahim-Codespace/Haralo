@@ -2,11 +2,11 @@ import LostItem from '../models/lostItem.js';
 
 export const createLostItem = async (req, res) => {
   try {
-    const { name, item, location, date, description, photo } = req.body;
+    const { name, item, location, date, description, photo, contact } = req.body;
     if (!name || !item || !location || !date) {
       return res.status(400).json({ message: "All required fields must be filled" });
     }
-    const lostItem = new LostItem({ name, item, location, date, description, photo });
+    const lostItem = new LostItem({ name, item, location, date, description, photo, contact });
     await lostItem.save();
     res.status(201).json({ message: "Lost item reported successfully", lostItem });
   } catch (error) {
