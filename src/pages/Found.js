@@ -23,6 +23,44 @@ const Found = () => {
       });
   }, []);
 
+  // helper to read current user id from stored JWT
+  const getCurrentUserId = () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const payload = JSON.parse(atob(parts[1]));
+      return payload._id || payload.id || null;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const currentUserId = getCurrentUserId();
+
+  const toggleStatus = async (post) => {
+    const newStatus = post.status === 'available' ? 'returned' : 'available';
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/report-found/${post._id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Failed to update status');
+        return;
+      }
+      const data = await res.json();
+      setFoundPosts(prev => prev.map(p => p._id === post._id ? data.item : p));
+    } catch (err) {
+      console.error(err);
+      alert('Server error');
+    }
+  };
+
   return (
     <div className="page-container">
       <Navigation />
@@ -47,12 +85,32 @@ const Found = () => {
                   <Card.Body className="p-3">
                     
                     <div className="d-flex align-items-center mb-3">
-                      <img 
-                        src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(post.name || "User")}
-                        alt={post.name}
-                        className="profile-pic me-3"
-                      />
-                      <h6 className="user-name mb-0">{post.name}</h6>
+                      {
+                        (() => {
+                          const apiOrigin = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+                          let avatarSrc = null;
+                          if (post.posterAvatar && typeof post.posterAvatar === 'string') {
+                            avatarSrc = post.posterAvatar;
+                            if (avatarSrc.startsWith('/api/') || avatarSrc.startsWith('/uploads/')) {
+                              avatarSrc = `${apiOrigin}${avatarSrc}`;
+                            } else if (!avatarSrc.startsWith('http')) {
+                              avatarSrc = `${apiOrigin}${avatarSrc.startsWith('/') ? '' : '/'}${avatarSrc}`;
+                            }
+                          }
+
+                          return (
+                            <>
+                              <img
+                                src={avatarSrc || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(post.name || "User"))}
+                                alt={post.name}
+                                className="profile-pic me-3"
+                                onError={(e) => { e.currentTarget.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(post.name || "User"); }}
+                              />
+                              <h6 className="user-name mb-0">{post.name}</h6>
+                            </>
+                          );
+                        })()
+                      }
                     </div>
 
                     <h5 className="item-title mb-1">{post.item || 'Item'}</h5>
@@ -107,13 +165,25 @@ const Found = () => {
                       >
                         Contact
                       </Button>
-                      <Button 
-                        variant="outline-success"
-                        size="sm"
-                        className="status-btn"
-                      >
-                        Available
-                      </Button>
+                      {String(post.posterId) === String(currentUserId) ? (
+                        <Button 
+                          variant="outline-success"
+                          size="sm"
+                          className="status-btn"
+                          onClick={() => toggleStatus(post)}
+                        >
+                          {post.status || 'available'}
+                        </Button>
+                      ) : (
+                        <Button 
+                          variant="outline-success"
+                          size="sm"
+                          className="status-btn"
+                          disabled
+                        >
+                          {post.status || 'available'}
+                        </Button>
+                      )}
                     </div>
                   </Card.Body>
                 </Card>

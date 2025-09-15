@@ -5,7 +5,6 @@ import Footer from '../components/footer';
 
 function ReportFoundItem() {
   const [form, setForm] = useState({
-    name: '',
     item: '',
     location: '',
     date: '',
@@ -35,7 +34,6 @@ function ReportFoundItem() {
       }
 
       const payload = {
-        name: form.name,
         item: form.item,
         location: form.location,
         date: form.date,
@@ -44,14 +42,15 @@ function ReportFoundItem() {
         photo: photoUrl,
       };
 
+      const token = localStorage.getItem('token');
       const res = await fetch('http://localhost:5000/api/report-found', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
         body: JSON.stringify(payload),
       });
       if (res.ok) {
         alert('Item reported successfully!');
-        setForm({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null });
+  setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null });
       } else {
         alert('Error reporting item.');
       }
@@ -70,8 +69,6 @@ function ReportFoundItem() {
             <span className="red">Report</span> <span className="green">Found Item</span>
           </h2>
           <form className="form" onSubmit={handleSubmit}>
-            <label>Name :</label>
-            <input type="text" name="name" value={form.name} onChange={handleChange} />
 
             <label>Item :</label>
             <input type="text" name="item" value={form.item} onChange={handleChange} />

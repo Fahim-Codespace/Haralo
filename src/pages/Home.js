@@ -29,13 +29,13 @@ function Home() {
               <>
                 <button
                   className={`${styles.actionBtn} ${styles.lostBtn}`}
-                  onClick={() => navigate('/lost')}
+                  onClick={() => navigate('/report-lost-item')}
                 >
                   Lost
                 </button>
                 <button
                   className={`${styles.actionBtn} ${styles.foundBtn}`}
-                  onClick={() => navigate('/found')}
+                  onClick={() => navigate('/report-found')}
                 >
                   Found
                 </button>

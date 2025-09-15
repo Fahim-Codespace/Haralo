@@ -7,7 +7,13 @@ const lostItemSchema = new mongoose.Schema({
     date: { type: Date, required: true },
     description: { type: String },
         contact: { type: String, required: true },
-    photo: { type: String }
+    photo: { type: String },
+    // who posted this lost item
+    posterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+    // poster's avatar filename (snapshot)
+    posterAvatar: { type: String },
+    // status: lost | got returned
+    status: { type: String, enum: ['lost', 'got returned'], default: 'lost' }
    
 });
 

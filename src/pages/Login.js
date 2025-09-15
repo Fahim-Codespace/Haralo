@@ -49,8 +49,8 @@ const Login = () => {
                     localStorage.setItem('userEmail', res.data.email);
                 }
                 
-                // Redirect to profile page
-                navigate('/profile');
+                // Redirect to home page
+                navigate('/');
             }
         } catch (err) {
             console.error("Login error:", err);

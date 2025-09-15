@@ -1,11 +1,13 @@
 import express from 'express';
 import multer from 'multer';
+import requireAuth from '../middleware/auth.js';
 import FoundItem from '../models/FoundItem.js';
+import Student from '../models/students.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' }); // Store files in 'uploads' folder
 
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
   try {
     console.log('FoundItem POST req.body:', req.body);
     console.log('FoundItem POST req.file:', req.file ? { filename: req.file.filename, originalname: req.file.originalname } : null);
@@ -21,13 +23,29 @@ router.post('/', upload.single('photo'), async (req, res) => {
   const photo = photoFromBody || (req.file ? req.file.filename : null);
     const parsedDate = date ? new Date(date) : null;
 
+    // poster must be authenticated (requireAuth). Use req.user._id as posterId and fetch their name + avatar
+    const posterId = req.user && req.user._id;
+    let postName = name;
+    let posterAvatar = null;
+    if (posterId) {
+      try {
+        const student = await Student.findById(posterId).select('name avatar');
+        if (student && student.name) postName = student.name;
+        if (student && student.avatar) posterAvatar = student.avatar;
+      } catch (e) {
+        console.warn('Failed to lookup student name/avatar for posterId:', e.message);
+      }
+    }
+
     const foundItem = new FoundItem({
-      name,
+      name: postName,
       item,
       location,
       date: parsedDate,
       description,
       photo,
+      posterId,
+      posterAvatar,
     });
 
     // Inspect and assign contact explicitly if schema/path exists
@@ -51,6 +69,33 @@ router.post('/', upload.single('photo'), async (req, res) => {
   } catch (error) {
     console.error('FoundItem POST error:', error);
     res.status(500).json({ error: 'Failed to report found item.' });
+  }
+});
+
+// PATCH /:id/status - update status (only poster can change)
+router.patch('/:id/status', requireAuth, async (req, res) => {
+  try {
+    const posterId = req.user && req.user._id;
+    const itemId = req.params.id;
+    const { status } = req.body;
+    if (!['available', 'returned'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    const item = await FoundItem.findById(itemId);
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+
+    if (!item.posterId) return res.status(403).json({ error: 'Poster not recorded for this item' });
+    if (String(item.posterId) !== String(posterId)) {
+      return res.status(403).json({ error: 'Only the poster can change status' });
+    }
+
+    item.status = status;
+    await item.save();
+    res.json({ message: 'Status updated', item });
+  } catch (error) {
+    console.error('Error updating found status:', error);
+    res.status(500).json({ error: 'Failed to update status' });
   }
 });
 

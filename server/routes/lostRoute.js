@@ -1,11 +1,13 @@
 import express from 'express';
 import multer from 'multer';
 import LostItem from '../models/lostItem.js';
+import Student from '../models/students.js';
+import requireAuth from '../middleware/auth.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
   try {
     console.log('LostItem POST req.body:', req.body);
     console.log('LostItem POST req.file:', req.file ? { filename: req.file.filename, originalname: req.file.originalname } : null);
@@ -24,14 +26,30 @@ router.post('/', upload.single('photo'), async (req, res) => {
     // Coerce date to a Date object if provided as string
     const parsedDate = date ? new Date(date) : null;
 
+    // poster must be authenticated (requireAuth). Use req.user._id as posterId and fetch their name + avatar
+    const posterId = req.user && req.user._id;
+    let postName = name;
+    let posterAvatar = null;
+    if (posterId) {
+      try {
+        const student = await Student.findById(posterId).select('name avatar');
+        if (student && student.name) postName = student.name;
+        if (student && student.avatar) posterAvatar = student.avatar;
+      } catch (e) {
+        console.warn('Failed to lookup student name/avatar for posterId:', e.message);
+      }
+    }
+
     const lostItem = new LostItem({
-      name,
+      name: postName,
       item,
       location,
       date: parsedDate,
       description,
       contact,
       photo,
+      posterId,
+      posterAvatar,
     });
 
     // Debug: inspect the constructed Mongoose document before saving
@@ -76,6 +94,33 @@ router.get('/', async (req, res) => {
     res.json(items);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch lost items.' });
+  }
+});
+
+// PATCH /:id/status - update status (only poster can change)
+router.patch('/:id/status', requireAuth, async (req, res) => {
+  try {
+    const posterId = req.user && req.user._id;
+    const itemId = req.params.id;
+    const { status } = req.body;
+    if (!['lost', 'got returned'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    const item = await LostItem.findById(itemId);
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+
+    if (!item.posterId) return res.status(403).json({ error: 'Poster not recorded for this item' });
+    if (String(item.posterId) !== String(posterId)) {
+      return res.status(403).json({ error: 'Only the poster can change status' });
+    }
+
+    item.status = status;
+    await item.save();
+    res.json({ message: 'Status updated', item });
+  } catch (error) {
+    console.error('Error updating lost status:', error);
+    res.status(500).json({ error: 'Failed to update status' });
   }
 });
 
