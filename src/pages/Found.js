@@ -85,12 +85,32 @@ const Found = () => {
                   <Card.Body className="p-3">
                     
                     <div className="d-flex align-items-center mb-3">
-                      <img 
-                        src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(post.name || "User")}
-                        alt={post.name}
-                        className="profile-pic me-3"
-                      />
-                      <h6 className="user-name mb-0">{post.name}</h6>
+                      {
+                        (() => {
+                          const apiOrigin = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+                          let avatarSrc = null;
+                          if (post.posterAvatar && typeof post.posterAvatar === 'string') {
+                            avatarSrc = post.posterAvatar;
+                            if (avatarSrc.startsWith('/api/') || avatarSrc.startsWith('/uploads/')) {
+                              avatarSrc = `${apiOrigin}${avatarSrc}`;
+                            } else if (!avatarSrc.startsWith('http')) {
+                              avatarSrc = `${apiOrigin}${avatarSrc.startsWith('/') ? '' : '/'}${avatarSrc}`;
+                            }
+                          }
+
+                          return (
+                            <>
+                              <img
+                                src={avatarSrc || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(post.name || "User"))}
+                                alt={post.name}
+                                className="profile-pic me-3"
+                                onError={(e) => { e.currentTarget.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(post.name || "User"); }}
+                              />
+                              <h6 className="user-name mb-0">{post.name}</h6>
+                            </>
+                          );
+                        })()
+                      }
                     </div>
 
                     <h5 className="item-title mb-1">{post.item || 'Item'}</h5>

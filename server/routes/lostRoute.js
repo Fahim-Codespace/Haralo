@@ -1,13 +1,13 @@
 import express from 'express';
 import multer from 'multer';
-import jwt from 'jsonwebtoken';
 import LostItem from '../models/lostItem.js';
 import Student from '../models/students.js';
+import requireAuth from '../middleware/auth.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-router.post('/', upload.single('photo'), async (req, res) => {
+router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
   try {
     console.log('LostItem POST req.body:', req.body);
     console.log('LostItem POST req.file:', req.file ? { filename: req.file.filename, originalname: req.file.originalname } : null);
@@ -26,27 +26,17 @@ router.post('/', upload.single('photo'), async (req, res) => {
     // Coerce date to a Date object if provided as string
     const parsedDate = date ? new Date(date) : null;
 
-    // Try to extract posterId from Authorization header if available
-    let posterId = undefined;
-    try {
-      const auth = req.headers.authorization;
-      if (auth && auth.startsWith('Bearer ')) {
-        const token = auth.split(' ')[1];
-        const payload = jwt.verify(token, process.env.SECRET);
-        if (payload && payload._id) posterId = payload._id;
-      }
-    } catch (e) {
-      console.warn('Failed to decode token in lost POST:', e.message);
-    }
-
-    // If we have a posterId, lookup the student's name and override the provided name
+    // poster must be authenticated (requireAuth). Use req.user._id as posterId and fetch their name + avatar
+    const posterId = req.user && req.user._id;
     let postName = name;
+    let posterAvatar = null;
     if (posterId) {
       try {
-        const student = await Student.findById(posterId).select('name');
+        const student = await Student.findById(posterId).select('name avatar');
         if (student && student.name) postName = student.name;
+        if (student && student.avatar) posterAvatar = student.avatar;
       } catch (e) {
-        console.warn('Failed to lookup student name for posterId:', e.message);
+        console.warn('Failed to lookup student name/avatar for posterId:', e.message);
       }
     }
 
@@ -59,6 +49,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
       contact,
       photo,
       posterId,
+      posterAvatar,
     });
 
     // Debug: inspect the constructed Mongoose document before saving
@@ -106,21 +97,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-export default router;
-
 // PATCH /:id/status - update status (only poster can change)
-router.patch('/:id/status', async (req, res) => {
+router.patch('/:id/status', requireAuth, async (req, res) => {
   try {
-    const { authorization } = req.headers;
-    if (!authorization) return res.status(401).json({ error: 'Authorization token required' });
-    const token = authorization.split(' ')[1];
-    let payload;
-    try {
-      payload = jwt.verify(token, process.env.SECRET);
-    } catch (err) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-
+    const posterId = req.user && req.user._id;
     const itemId = req.params.id;
     const { status } = req.body;
     if (!['lost', 'got returned'].includes(status)) {
@@ -131,7 +111,7 @@ router.patch('/:id/status', async (req, res) => {
     if (!item) return res.status(404).json({ error: 'Item not found' });
 
     if (!item.posterId) return res.status(403).json({ error: 'Poster not recorded for this item' });
-    if (String(item.posterId) !== String(payload._id)) {
+    if (String(item.posterId) !== String(posterId)) {
       return res.status(403).json({ error: 'Only the poster can change status' });
     }
 
@@ -143,3 +123,5 @@ router.patch('/:id/status', async (req, res) => {
     res.status(500).json({ error: 'Failed to update status' });
   }
 });
+
+export default router;

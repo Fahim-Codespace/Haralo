@@ -10,6 +10,8 @@ const foundItemSchema = new mongoose.Schema({
   photo: { type: String },
   // who posted this item
   posterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+  // poster's avatar filename (snapshot)
+  posterAvatar: { type: String },
   // status: available | returned
   status: { type: String, enum: ['available', 'returned'], default: 'available' }
 });

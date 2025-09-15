@@ -10,6 +10,8 @@ const lostItemSchema = new mongoose.Schema({
     photo: { type: String },
     // who posted this lost item
     posterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+    // poster's avatar filename (snapshot)
+    posterAvatar: { type: String },
     // status: lost | got returned
     status: { type: String, enum: ['lost', 'got returned'], default: 'lost' }
    

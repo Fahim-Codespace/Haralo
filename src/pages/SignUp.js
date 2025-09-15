@@ -59,8 +59,8 @@ const SignUP = () => {
                     localStorage.setItem('userEmail', res.data.email);
                 }
                 
-                // Redirect to profile after successful signup
-                navigate('/profile');
+                // Redirect to home after successful signup
+                navigate('/');
             }
         } catch (err) {
             console.error(err);
