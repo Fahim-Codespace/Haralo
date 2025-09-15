@@ -7,7 +7,6 @@ import axios from 'axios';
 
 function ReportLostItem(){
   const [formData, setFormData] = useState({
-    name: '',
     item: '',
     location: '',
     date: '',
@@ -40,7 +39,6 @@ function ReportLostItem(){
       }
 
       const payload = {
-        name: formData.name,
         item: formData.item,
         location: formData.location,
         date: formData.date,
@@ -54,9 +52,9 @@ function ReportLostItem(){
         headers: { Authorization: token ? `Bearer ${token}` : '' }
       });
       setMessage(res.data.message);
-      if (res.status === 201) {
-  setFormData({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null });
-      }
+          if (res.status === 201) {
+            setFormData({ item: '', location: '', date: '', description: '', contact: '', photo: null });
+          }
     } catch (err) {
       setMessage(err.response?.data?.message || 'Something went wrong.');
     }
@@ -71,8 +69,6 @@ function ReportLostItem(){
             <span className="red">Report</span> <span className="green">Lost Item</span>
           </h2>
           <form className="form" onSubmit={handleSubmit}>
-            <label>Name :</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} required />
             <label>Item :</label>
             <input type="text" name="item" value={formData.item} onChange={handleChange} required />
             <label>Location :</label>

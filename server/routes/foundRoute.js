@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import jwt from 'jsonwebtoken';
 import FoundItem from '../models/FoundItem.js';
+import Student from '../models/students.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' }); // Store files in 'uploads' folder
@@ -36,8 +37,19 @@ router.post('/', upload.single('photo'), async (req, res) => {
       console.warn('Failed to decode token in found POST:', e.message);
     }
 
+    // If we have a posterId, try to read the student's name and override the provided name
+    let postName = name;
+    if (posterId) {
+      try {
+        const student = await Student.findById(posterId).select('name');
+        if (student && student.name) postName = student.name;
+      } catch (e) {
+        console.warn('Failed to lookup student name for posterId:', e.message);
+      }
+    }
+
     const foundItem = new FoundItem({
-      name,
+      name: postName,
       item,
       location,
       date: parsedDate,

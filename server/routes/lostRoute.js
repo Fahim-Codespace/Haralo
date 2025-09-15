@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import jwt from 'jsonwebtoken';
 import LostItem from '../models/lostItem.js';
+import Student from '../models/students.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
@@ -38,8 +39,19 @@ router.post('/', upload.single('photo'), async (req, res) => {
       console.warn('Failed to decode token in lost POST:', e.message);
     }
 
+    // If we have a posterId, lookup the student's name and override the provided name
+    let postName = name;
+    if (posterId) {
+      try {
+        const student = await Student.findById(posterId).select('name');
+        if (student && student.name) postName = student.name;
+      } catch (e) {
+        console.warn('Failed to lookup student name for posterId:', e.message);
+      }
+    }
+
     const lostItem = new LostItem({
-      name,
+      name: postName,
       item,
       location,
       date: parsedDate,
