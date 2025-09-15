@@ -44,9 +44,10 @@ function ReportFoundItem() {
         photo: photoUrl,
       };
 
+      const token = localStorage.getItem('token');
       const res = await fetch('http://localhost:5000/api/report-found', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
         body: JSON.stringify(payload),
       });
       if (res.ok) {

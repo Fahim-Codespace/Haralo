@@ -23,6 +23,43 @@ const Lost = () => {
       });
   }, []);
 
+  const getCurrentUserId = () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const payload = JSON.parse(atob(parts[1]));
+      return payload._id || payload.id || null;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const currentUserId = getCurrentUserId();
+
+  const toggleStatus = async (post) => {
+    const newStatus = post.status === 'lost' ? 'got returned' : 'lost';
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5000/api/report-lost/${post._id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Failed to update status');
+        return;
+      }
+      const data = await res.json();
+      setLostPosts(prev => prev.map(p => p._id === post._id ? data.item : p));
+    } catch (err) {
+      console.error(err);
+      alert('Server error');
+    }
+  };
+
   return (
     <div className="page-container">
       <Navigation />
@@ -103,13 +140,25 @@ const Lost = () => {
                       >
                         Contact
                       </Button>
-                      <Button 
-                        variant="outline-danger"
-                        size="sm"
-                        className="status-btn"
-                      >
-                        Lost
-                      </Button>
+                      {String(post.posterId) === String(currentUserId) ? (
+                        <Button 
+                          variant="outline-danger"
+                          size="sm"
+                          className="status-btn"
+                          onClick={() => toggleStatus(post)}
+                        >
+                          {post.status || 'lost'}
+                        </Button>
+                      ) : (
+                        <Button 
+                          variant="outline-danger"
+                          size="sm"
+                          className="status-btn"
+                          disabled
+                        >
+                          {post.status || 'lost'}
+                        </Button>
+                      )}
                     </div>
                   </Card.Body>
                 </Card>

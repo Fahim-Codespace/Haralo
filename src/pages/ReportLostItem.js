@@ -49,7 +49,10 @@ function ReportLostItem(){
         photo: photoUrl
       };
 
-      const res = await axios.post('http://localhost:5000/api/report-lost', payload);
+      const token = localStorage.getItem('token');
+      const res = await axios.post('http://localhost:5000/api/report-lost', payload, {
+        headers: { Authorization: token ? `Bearer ${token}` : '' }
+      });
       setMessage(res.data.message);
       if (res.status === 201) {
   setFormData({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null });

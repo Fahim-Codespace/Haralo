@@ -7,7 +7,11 @@ const foundItemSchema = new mongoose.Schema({
   date: { type: String, required: true },
   description: { type: String },
   contact: { type: String },
-  photo: { type: String }
+  photo: { type: String },
+  // who posted this item
+  posterId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+  // status: available | returned
+  status: { type: String, enum: ['available', 'returned'], default: 'available' }
 });
 
 // Safe model registration: replace any previously-registered FoundItem model that lacks the `contact` path

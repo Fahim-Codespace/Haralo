@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import jwt from 'jsonwebtoken';
 import LostItem from '../models/lostItem.js';
 
 const router = express.Router();
@@ -24,6 +25,19 @@ router.post('/', upload.single('photo'), async (req, res) => {
     // Coerce date to a Date object if provided as string
     const parsedDate = date ? new Date(date) : null;
 
+    // Try to extract posterId from Authorization header if available
+    let posterId = undefined;
+    try {
+      const auth = req.headers.authorization;
+      if (auth && auth.startsWith('Bearer ')) {
+        const token = auth.split(' ')[1];
+        const payload = jwt.verify(token, process.env.SECRET);
+        if (payload && payload._id) posterId = payload._id;
+      }
+    } catch (e) {
+      console.warn('Failed to decode token in lost POST:', e.message);
+    }
+
     const lostItem = new LostItem({
       name,
       item,
@@ -32,6 +46,7 @@ router.post('/', upload.single('photo'), async (req, res) => {
       description,
       contact,
       photo,
+      posterId,
     });
 
     // Debug: inspect the constructed Mongoose document before saving
@@ -80,3 +95,39 @@ router.get('/', async (req, res) => {
 });
 
 export default router;
+
+// PATCH /:id/status - update status (only poster can change)
+router.patch('/:id/status', async (req, res) => {
+  try {
+    const { authorization } = req.headers;
+    if (!authorization) return res.status(401).json({ error: 'Authorization token required' });
+    const token = authorization.split(' ')[1];
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.SECRET);
+    } catch (err) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    const itemId = req.params.id;
+    const { status } = req.body;
+    if (!['lost', 'got returned'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status value' });
+    }
+
+    const item = await LostItem.findById(itemId);
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+
+    if (!item.posterId) return res.status(403).json({ error: 'Poster not recorded for this item' });
+    if (String(item.posterId) !== String(payload._id)) {
+      return res.status(403).json({ error: 'Only the poster can change status' });
+    }
+
+    item.status = status;
+    await item.save();
+    res.json({ message: 'Status updated', item });
+  } catch (error) {
+    console.error('Error updating lost status:', error);
+    res.status(500).json({ error: 'Failed to update status' });
+  }
+});
