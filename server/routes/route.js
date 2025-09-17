@@ -1,7 +1,7 @@
 import express from 'express';
 import { getStudent, createStudent, loginStudent, getStudentByEmail } from '../controllers/studentController.js';
 import { createLostItem, getLostItems } from '../controllers/lostItemController.js';
-import requireAuth from '../middleware/auth.js';
+import requireAuth from '../Middleware/auth.js';
 
 const router = express.Router();
 

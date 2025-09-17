@@ -1,5 +1,5 @@
 import express from 'express';
-import requireAuth from '../middleware/auth.js';
+import requireAuth from '../Middleware/auth.js';
 import { uploadAvatar, setAvatarGridFS } from '../controllers/avatarController.js';
 
 const router = express.Router();

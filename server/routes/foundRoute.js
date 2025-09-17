@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import requireAuth from '../middleware/auth.js';
+import requireAuth from '../Middleware/auth.js';
 import FoundItem from '../models/FoundItem.js';
 import Student from '../models/students.js';
 

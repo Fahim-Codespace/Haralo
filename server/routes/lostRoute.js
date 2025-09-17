@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import LostItem from '../models/lostItem.js';
 import Student from '../models/students.js';
-import requireAuth from '../middleware/auth.js';
+import requireAuth from '../Middleware/auth.js';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
