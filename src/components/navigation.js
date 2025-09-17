@@ -15,8 +15,8 @@ const Navigation = () => {
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
-                            className="my-2 my-lg-0"
-                            style={{ maxHeight: '100px',marginLeft: '300px' }}
+                            className="mx-auto my-2 my-lg-0 d-flex flex-column flex-lg-row align-items-center"
+                            style={{ maxHeight: '100px' }}
                             navbarScroll
                         >
                             <Nav.Link as={Link} to="/">Home</Nav.Link>
