@@ -14,7 +14,9 @@ const Lost = () => {
     fetch('http://localhost:5000/api/report-lost')
       .then(res => res.json())
       .then(data => {
-        setLostPosts(data);
+        // Sort posts by date in descending order (newest first)
+        const sortedPosts = data.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+        setLostPosts(sortedPosts);
         setLoading(false);
       })
       .catch(() => {
