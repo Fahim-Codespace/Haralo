@@ -11,3 +11,55 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Navbar hover underline and active color */
+.nav-link,
+.navbar-nav .nav-link,
+.dropdown-item {
+  position: relative;
+  color: inherit; /* keep default color unless active */
+}
+
+.nav-link::after,
+.dropdown-item::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  bottom: -4px;
+  height: 3px;
+  width: 60%;
+  /* Force the underline color so it's consistent across pages and not overridden */
+  background-color: rgb(34,139,34) !important; /* forestgreen */
+  transition: transform 180ms ease, opacity 180ms ease;
+  opacity: 0;
+  transform-origin: center;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+.nav-link:hover::after,
+.dropdown-item:hover::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
+
+/* Active nav link: green text and underline visible */
+.nav-link.active,
+.navbar-nav .nav-link.active,
+.dropdown-item.active {
+  color: rgb(34,139,34) !important; /* forestgreen */
+}
+.nav-link:hover,
+.dropdown-item:hover,
+.nav-link:focus,
+.dropdown-item:focus {
+  color: rgb(34,139,34) !important;
+  text-decoration: none;
+}
+.nav-link.active::after,
+.dropdown-item.active::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
