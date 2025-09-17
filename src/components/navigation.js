@@ -9,9 +9,9 @@ import { Link } from 'react-router-dom';
 const Navigation = () => {
     return ( 
         <div>
-            <Navbar expand="lg" style={{ backgroundColor: 'rgb(255, 248, 247)' }}>
+            <Navbar expand="lg" style={{ backgroundColor: 'rgba(255, 255, 255, 1)' }}>
                 <Container fluid>
-                    <Navbar.Brand as={Link} to="/">LOST AND FOUND</Navbar.Brand>
+                    <Navbar.Brand as={Link} to="/">PACCHINA.net</Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
@@ -32,8 +32,6 @@ const Navigation = () => {
                                 <NavDropdown.Item as={Link} to="/report-found">Report FOUND</NavDropdown.Item>
                                 <NavDropdown.Item as={Link} to="/report-lost-item">Report LOST</NavDropdown.Item>
                             </NavDropdown>
-                            
-                            {/* Signup option removed from navbar */}
                         </Nav>
                         
                     </Navbar.Collapse>

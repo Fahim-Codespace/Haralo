@@ -9,7 +9,7 @@ const Footer = () => {
             <Container fluid>
                 <Row className="py-2">
                     <Col md={4}>
-                        <h5 className={footerStyles.footerTitle}>Lost and Found</h5>
+                        <h5 className={footerStyles.footerTitle}>Pacchina</h5>
                         <p className={footerStyles.footerText}>
                             Helping people reunite with their lost belongings and find their owners.
                         </p>
