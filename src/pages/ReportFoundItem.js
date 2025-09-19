@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../css/ReportLostItem.css';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
+import { api } from '../utils/api';
 
 function ReportFoundItem() {
   const [form, setForm] = useState({
@@ -25,12 +26,18 @@ function ReportFoundItem() {
     e.preventDefault();
     try {
       let photoUrl = '';
+      const token = localStorage.getItem('token');
+
       if (form.photo) {
         const uploadForm = new FormData();
         uploadForm.append('photo', form.photo);
-        const upResp = await fetch('http://localhost:5000/api/uploads/gridfs/upload', { method: 'POST', body: uploadForm });
-        const upData = await upResp.json();
-        photoUrl = upData.fileUrl;
+
+        const upResp = await api.post('/api/uploads/gridfs/upload', uploadForm, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        });
+        photoUrl = upResp.data?.fileUrl || '';
       }
 
       const payload = {
@@ -42,16 +49,15 @@ function ReportFoundItem() {
         photo: photoUrl,
       };
 
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/report-found', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
-        body: JSON.stringify(payload),
+      const res = await api.post('/api/report-found', payload, {
+        headers: { Authorization: token ? `Bearer ${token}` : '' },
       });
-      if (res.ok) {
+
+      if (res.status >= 200 && res.status < 300) {
         alert('Item reported successfully!');
-  setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null });
+        setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null });
       } else {
+        console.error('Report failed', res);
         alert('Error reporting item.');
       }
     } catch (err) {
@@ -92,7 +98,7 @@ function ReportFoundItem() {
 
             <div className="button-group">
               <button type="submit" className="submit-btn">Submit</button>
-              <button type="reset" className="reset-btn" onClick={() => setForm({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null })}>Reset</button>
+              <button type="button" className="reset-btn" onClick={() => setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null })}>Reset</button>
             </div>
           </form>
         </div>

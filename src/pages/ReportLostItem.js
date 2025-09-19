@@ -2,25 +2,23 @@ import React, { useState } from 'react';
 import '../css/ReportLostItem.css';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
+import { api } from '../utils/api';
 
-import axios from 'axios';
-
-function ReportLostItem(){
-  const [formData, setFormData] = useState({
+function ReportLostItem() {
+  const [form, setForm] = useState({
     item: '',
     location: '',
     date: '',
     description: '',
     contact: '',
-    photo: null
+    photo: null,
   });
-  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    setFormData(prev => ({
+    const { name, value, files } = e.target;
+    setForm((prev) => ({
       ...prev,
-      [name]: type === 'file' ? files[0] : value
+      [name]: files ? files[0] : value,
     }));
   };
 
@@ -28,35 +26,43 @@ function ReportLostItem(){
     e.preventDefault();
     try {
       let photoUrl = '';
-      // If a file is selected, upload it to GridFS via server endpoint
-      if (formData.photo) {
+      const token = localStorage.getItem('token');
+
+      if (form.photo) {
         const uploadForm = new FormData();
-        uploadForm.append('photo', formData.photo);
-        const upResp = await axios.post('http://localhost:5000/api/uploads/gridfs/upload', uploadForm, {
-          headers: { 'Content-Type': 'multipart/form-data' }
+        uploadForm.append('photo', form.photo);
+
+        const upResp = await api.post('/api/uploads/gridfs/upload', uploadForm, {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+          },
         });
-        photoUrl = upResp.data.fileUrl;
+        photoUrl = upResp.data?.fileUrl || '';
       }
 
       const payload = {
-        item: formData.item,
-        location: formData.location,
-        date: formData.date,
-        description: formData.description,
-        contact: formData.contact,
-        photo: photoUrl
+        item: form.item,
+        location: form.location,
+        date: form.date,
+        description: form.description,
+        contact: form.contact,
+        photo: photoUrl,
       };
 
-      const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/report-lost', payload, {
-        headers: { Authorization: token ? `Bearer ${token}` : '' }
+      const res = await api.post('/api/report-lost', payload, {
+        headers: { Authorization: token ? `Bearer ${token}` : '' },
       });
-      setMessage(res.data.message);
-          if (res.status === 201) {
-            setFormData({ item: '', location: '', date: '', description: '', contact: '', photo: null });
-          }
+
+      if (res.status >= 200 && res.status < 300) {
+        alert('Item reported successfully!');
+        setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null });
+      } else {
+        console.error('Report failed', res);
+        alert('Error reporting item.');
+      }
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Something went wrong.');
+      console.error(err);
+      alert('Server error.');
     }
   };
 
@@ -69,26 +75,31 @@ function ReportLostItem(){
             <span className="red">Report</span> <span className="green">Lost Item</span>
           </h2>
           <form className="form" onSubmit={handleSubmit}>
+
             <label>Item :</label>
-            <input type="text" name="item" value={formData.item} onChange={handleChange} required />
+            <input type="text" name="item" value={form.item} onChange={handleChange} />
+
             <label>Location :</label>
-            <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+            <input type="text" name="location" value={form.location} onChange={handleChange} />
+
             <label>Date :</label>
-            <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+            <input type="date" name="date" value={form.date} onChange={handleChange} />
+
             <label>Item Description :</label>
-            <textarea name="description" value={formData.description} onChange={handleChange}></textarea>
+            <textarea name="description" value={form.description} onChange={handleChange}></textarea>
 
             <label>Contact Info :</label>
-            <input type="text" name="contact" value={formData.contact} onChange={handleChange} placeholder="Enter your phone, email, etc." required />
+            <input type="text" name="contact" value={form.contact} onChange={handleChange} placeholder="Enter your phone, email, etc." required />
+
             <label>Upload Photo :</label>
             <input type="file" name="photo" onChange={handleChange} />
             <small>(Upload if available)</small>
+
             <div className="button-group">
               <button type="submit" className="submit-btn">Submit</button>
-              <button type="reset" className="reset-btn" onClick={() => setFormData({ name: '', item: '', location: '', date: '', description: '', contact: '', photo: null })}>Reset</button>
+              <button type="button" className="reset-btn" onClick={() => setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null })}>Reset</button>
             </div>
           </form>
-          {message && <p style={{ marginTop: '16px' }}>{message}</p>}
         </div>
       </div>
       <Footer />
