@@ -4,6 +4,7 @@ import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import styles from '../css/SignUP.module.css';
 import axios from 'axios';
+import { get, put } from '../utils/requests';
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -26,15 +27,12 @@ function Profile() {
     // Try to fetch user data from backend
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/student`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        // get profile
+        const res = await get('/api/student/profile', { headers: { Authorization: `Bearer ${token}` } });
         
         // Find current user from the list of students
-        if (Array.isArray(response.data)) {
-          const currentUser = response.data.find(u => u.email === userEmail);
+        if (Array.isArray(res.data)) {
+          const currentUser = res.data.find(u => u.email === userEmail);
           if (currentUser) {
             // Normalize avatar URL: if server returned a relative GridFS path like '/api/uploads/gridfs/..',
             // prefix the API base so the frontend can load it from the backend host.
@@ -107,6 +105,20 @@ function Profile() {
       setError('Upload failed');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleUpdateProfile = async (updateData) => {
+    const token = localStorage.getItem('token');
+    if (!token) return navigate('/login');
+    try {
+      // update profile
+      await put('/api/student/profile', updateData, { headers: { Authorization: `Bearer ${token}` } });
+      setError('');
+      // Optionally, refetch user data or update local state to reflect changes
+    } catch (err) {
+      console.error('Profile update error', err);
+      setError('Failed to update profile');
     }
   };
 

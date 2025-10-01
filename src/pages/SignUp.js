@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
-import { Link } from "react-router-dom";
 import styles from "../css/SignUP.module.css";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from 'axios';
+import { post } from '../utils/requests';
 
 const SignUP = () => {
     const [formData, setFormData] = useState({
@@ -18,6 +17,7 @@ const SignUP = () => {
     });
 
     const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -28,21 +28,11 @@ const SignUP = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSignUp = async (e) => {
         e.preventDefault();
-
-        if (!formData.agree) {
-            setMessage("You must agree to the terms and conditions.");
-            return;
-        }
-
         try {
-            const res = await axios.post("http://localhost:5000/api/student/signup", {
-                name: formData.name,
-                institution: formData.institution,
-                email: formData.email,
-                password: formData.password
-            });
+            const { name, email, password, institution } = formData;
+            const res = await post('/api/student/register', { name, email, password, institution });
 
             setMessage(res.data.message || "Signup successful!");
 
@@ -69,6 +59,8 @@ const SignUP = () => {
             } else {
                 setMessage("Something went wrong. Please try again.");
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -79,7 +71,7 @@ const SignUP = () => {
                 <div className={styles.centeredContent}>
                     <div style={{ width: '480px', minHeight: '340px', margin: '32px auto', background: 'rgba(255,255,255,0.95)', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', padding: '32px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <h2 style={{ marginBottom: '24px', fontWeight: 700, color: '#2c3e50' }}>Sign Up</h2>
-                        <Form onSubmit={handleSubmit}>
+                        <Form onSubmit={handleSignUp}>
                         <Form.Group className="mb-3" controlId="formName">
                             <Form.Label>Full Name</Form.Label>
                             <Form.Control 
@@ -143,8 +135,8 @@ const SignUP = () => {
                             />
                         </Form.Group>
 
-                        <Button variant="primary" type="submit">
-                            Submit
+                        <Button variant="primary" type="submit" disabled={isLoading}>
+                            {isLoading ? 'Signing up...' : 'Submit'}
                         </Button>
                     </Form>
 

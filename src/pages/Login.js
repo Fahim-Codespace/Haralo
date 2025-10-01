@@ -5,7 +5,7 @@ import Footer from "../components/footer";
 import styles from "../css/SignUP.module.css";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from 'axios';
+import { post } from '../utils/requests'; // <-- use centralized requests
 import { Link } from 'react-router-dom';
 
 const Login = () => {
@@ -26,14 +26,12 @@ const Login = () => {
         e.preventDefault();
         setIsLoading(true);
         setMessage("");
-        
         try {
-            const res = await axios.post("http://localhost:5000/api/student/login", {
+            const res = await post('/api/student/login', {
                 email: formData.email,
                 password: formData.password
             });
             
-            // Updated to match new response format {email, token}
             setMessage("Login successful!");
             
             if (res.status === 200) {
@@ -54,11 +52,7 @@ const Login = () => {
             }
         } catch (err) {
             console.error("Login error:", err);
-            if (err.response && err.response.data && err.response.data.message) {
-                setMessage(err.response.data.message);
-            } else {
-                setMessage("Something went wrong. Please try again.");
-            }
+            setMessage(err.response?.data?.message || err.message || "Something went wrong");
         } finally {
             setIsLoading(false);
         }

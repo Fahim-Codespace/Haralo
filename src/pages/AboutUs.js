@@ -2,6 +2,7 @@ import React from 'react';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import '../css/AboutUs.css';
+import { get } from '../utils/requests';
 
 const teamMembers = [
   { name: 'Jaliz Mahamud Mridul', img: '/images/mridul.jpg' },
@@ -10,6 +11,15 @@ const teamMembers = [
 ];
 
 function AboutUs() {
+  const fetchData = async () => {
+    const data = await get('/api/some-info');
+    console.log(data);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div>
       <Navigation />

@@ -3,9 +3,22 @@ import multer from 'multer';
 import LostItem from '../models/lostItem.js';
 import Student from '../models/students.js';
 import requireAuth from '../Middleware/auth.js';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { connectDb } from '../config/db.js';
+
+dotenv.config();
+connectDb();
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
+
+// Replace simple cors() with configurable origin via FRONTEND_URL
+const FRONTEND_URL = process.env.FRONTEND_URL || '*';
+router.use(cors({
+  origin: FRONTEND_URL === '*' ? true : FRONTEND_URL,
+  credentials: true,
+}));
 
 router.post('/', requireAuth, upload.single('photo'), async (req, res) => {
   try {

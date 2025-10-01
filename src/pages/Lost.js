@@ -3,6 +3,7 @@ import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import '../css/LostFound.css';
+import { post, get } from '../utils/requests';
 
 const Lost = () => {
   const [lostPosts, setLostPosts] = useState([]);

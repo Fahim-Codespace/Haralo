@@ -3,6 +3,7 @@ import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import '../css/LostFound.css';
+import { post, get } from '../utils/requests';
 
 const Found = () => {
   const [foundPosts, setFoundPosts] = useState([]);
@@ -61,6 +62,14 @@ const Found = () => {
       console.error(err);
       alert('Server error');
     }
+  };
+
+  // report found item
+  const reportFoundItem = async (formData) => {
+    await post('/api/report-found', formData);
+    // fetch list
+    const list = await get('/api/report-found');
+    setFoundPosts(list);
   };
 
   return (
