@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form';
 import { post } from '../utils/requests';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import connectDb from '../db/connect.js';
 
 const RUNTIME = (typeof window !== 'undefined' && window.__BACKEND_URL__) ? window.__BACKEND_URL__ : null;
 export const BASE = (RUNTIME || process.env.REACT_APP_API_URL || '').replace(/\/+$/, '');
