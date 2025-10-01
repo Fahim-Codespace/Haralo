@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import styles from "../css/SignUP.module.css";

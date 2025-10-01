@@ -5,8 +5,13 @@ import Footer from "../components/footer";
 import styles from "../css/SignUP.module.css";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { post } from '../utils/requests'; // <-- use centralized requests
+import { post } from '../utils/requests';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+
+const RUNTIME = (typeof window !== 'undefined' && window.__BACKEND_URL__) ? window.__BACKEND_URL__ : null;
+export const BASE = (RUNTIME || process.env.REACT_APP_API_URL || '').replace(/\/+$/, '');
+export const api = axios.create({ baseURL: BASE || '', timeout: 15000, headers: { 'Content-Type': 'application/json' } });
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -27,29 +32,23 @@ const Login = () => {
         setIsLoading(true);
         setMessage("");
         try {
-            const res = await post('/api/student/login', {
-                email: formData.email,
-                password: formData.password
-            });
+            const { email, password } = formData;
+            await post('/api/student/login', { email, password });
             
             setMessage("Login successful!");
             
-            if (res.status === 200) {
-                setFormData({ email: "", password: "" });
-                
-                // Save JWT token to localStorage
-                if (res.data.token) {
-                    localStorage.setItem('token', res.data.token);
-                }
-                
-                // Save user email to localStorage
-                if (res.data.email) {
-                    localStorage.setItem('userEmail', res.data.email);
-                }
-                
-                // Redirect to home page
-                navigate('/');
+            // Save JWT token to localStorage
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
             }
+            
+            // Save user email to localStorage
+            if (res.data.email) {
+                localStorage.setItem('userEmail', res.data.email);
+            }
+            
+            // Redirect to home page
+            navigate('/');
         } catch (err) {
             console.error("Login error:", err);
             setMessage(err.response?.data?.message || err.message || "Something went wrong");
