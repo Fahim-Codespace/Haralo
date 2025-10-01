@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { post } from '../utils/requests';
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { post } from '../utils/requests'; // use the requests wrapper
 import styles from "../css/SignUP.module.css";
 
 const Login = () => {
@@ -24,13 +24,11 @@ const Login = () => {
     setMessage("");
 
     try {
-      // ensure response variable is declared
       const response = await post('/api/student/login', {
         email: formData.email,
         password: formData.password
       });
 
-      // use response instead of an undefined `res`
       if (response && response.status === 200) {
         const token = response.data?.token;
         if (token) localStorage.setItem('token', token);

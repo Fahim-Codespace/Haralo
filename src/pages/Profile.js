@@ -6,8 +6,9 @@ import styles from '../css/SignUP.module.css';
 import axios from 'axios';
 import { get, put } from '../utils/requests';
 
-function Profile() {
-  const [user, setUser] = useState(null);
+const Profile = () => {
+  const [profile, setProfile] = useState(null);
+  const [updateData, setUpdateData] = useState({ name: '', email: '' });
   const [avatarFile, setAvatarFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -41,16 +42,17 @@ function Profile() {
                 currentUser.avatar = `${apiUrl}${currentUser.avatar}`;
               }
             }
-            setUser(currentUser);
+            setProfile(currentUser);
+            setUpdateData({ name: currentUser.name || '', email: currentUser.email || '' });
           } else {
             // Fallback: create user object from stored email
-            setUser({ email: userEmail, name: 'User', institution: 'Not specified' });
+            setProfile({ email: userEmail, name: 'User', institution: 'Not specified' });
           }
         }
       } catch (err) {
         console.error('Error fetching user data:', err);
         // Fallback: create user object from stored email
-        setUser({ email: userEmail, name: 'User', institution: 'Not specified' });
+        setProfile({ email: userEmail, name: 'User', institution: 'Not specified' });
         setError('Failed to load full profile data');
       } finally {
         setLoading(false);
@@ -97,7 +99,7 @@ function Profile() {
           // as a last resort, prefix apiUrl
           avatarPath = `${apiUrl}${avatarPath}`;
         }
-        setUser(prev => ({ ...(prev || {}), avatar: avatarPath }));
+        setProfile(prev => ({ ...(prev || {}), avatar: avatarPath }));
         setAvatarFile(null);
       }
     } catch (err) {
@@ -159,7 +161,7 @@ function Profile() {
                 tabIndex={0}
                 onClick={() => document.getElementById('avatar-input').click()}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') document.getElementById('avatar-input').click(); }}
-                src={user && user.avatar ? user.avatar : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
+                src={profile && profile.avatar ? profile.avatar : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
                 alt="Profile"
                 style={{ width: '140px', height: '140px', borderRadius: '50%', objectFit: 'cover', marginBottom: '18px', boxShadow: '0 6px 30px rgba(0,0,0,0.12)', cursor: 'pointer' }}
               />
@@ -170,12 +172,12 @@ function Profile() {
             
             {loading ? (
               <p>Loading...</p>
-            ) : user ? (
+            ) : profile ? (
               <>
                 <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: '12px', padding: '28px 36px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', minWidth: '380px', textAlign: 'left', marginTop: '18px', marginBottom: '18px' }}>
-                  <div style={{ marginBottom: '12px', fontSize: '1.15rem' }}><span style={{ fontWeight: 600, color: '#2c3e50' }}>Name:</span> {user.name || 'Not specified'}</div>
-                  <div style={{ marginBottom: '12px', fontSize: '1.15rem' }}><span style={{ fontWeight: 600, color: '#2c3e50' }}>Email:</span> {user.email}</div>
-                  <div style={{ marginBottom: '0', fontSize: '1.15rem' }}><span style={{ fontWeight: 600, color: '#2c3e50' }}>Institution:</span> {user.institution || <span style={{ color: '#888' }}>N/A</span>}</div>
+                  <div style={{ marginBottom: '12px', fontSize: '1.15rem' }}><span style={{ fontWeight: 600, color: '#2c3e50' }}>Name:</span> {profile.name || 'Not specified'}</div>
+                  <div style={{ marginBottom: '12px', fontSize: '1.15rem' }}><span style={{ fontWeight: 600, color: '#2c3e50' }}>Email:</span> {profile.email}</div>
+                  <div style={{ marginBottom: '0', fontSize: '1.15rem' }}><span style={{ fontWeight: 600, color: '#2c3e50' }}>Institution:</span> {profile.institution || <span style={{ color: '#888' }}>N/A</span>}</div>
                 </div>
 
                 {avatarFile && (

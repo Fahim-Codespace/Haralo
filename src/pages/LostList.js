@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { get } from '../utils/requests';
-import { useEffect, useState } from 'react';
 
-const LostItems = () => {
+const LostList = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -10,7 +10,10 @@ const LostItems = () => {
         const res = await get('/api/report-lost');
         if (res && res.status === 200) setItems(res.data || []);
         else setItems([]);
-      } catch (err) { console.error('Load lost items', err); setItems([]); }
+      } catch (err) {
+        console.error('Load lost items', err);
+        setItems([]);
+      }
     };
     load();
   }, []);
@@ -27,4 +30,4 @@ const LostItems = () => {
   );
 };
 
-export default LostItems;
+export default LostList;

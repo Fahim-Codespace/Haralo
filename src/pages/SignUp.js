@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { post } from '../utils/requests';
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { post } from '../utils/requests';
 import styles from "../css/SignUP.module.css";
 
 const SignUp = () => {
@@ -12,16 +12,25 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await post('/api/student/signup', { name, email, password });
+      const res = await post('/api/student/signup', {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
       if (res && res.status >= 200 && res.status < 300) navigate('/login');
       else alert(res?.data?.message || 'Signup failed');
     } catch (err) {
       console.error('Signup error', err);
-      alert(err.response?.data?.message || err.message || 'Server error');
+      alert(err?.response?.data?.message || err.message || 'Server error');
     } finally { setIsLoading(false); }
   };
 
@@ -40,7 +49,7 @@ const SignUp = () => {
                                 placeholder="Enter full name" 
                                 name="name"
                                 value={form.name}
-                                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                onChange={handleChange}
                                 required
                             />
                         </Form.Group>
@@ -52,7 +61,7 @@ const SignUp = () => {
                                 placeholder="Enter email" 
                                 name="email"
                                 value={form.email}
-                                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                onChange={handleChange}
                                 required
                             />
                             <Form.Text className="text-muted">
@@ -67,7 +76,7 @@ const SignUp = () => {
                                 placeholder="Password" 
                                 name="password"
                                 value={form.password}
-                                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                                onChange={handleChange}
                                 required
                             />
                             <Form.Text className="text-muted">

@@ -22,11 +22,16 @@ api.interceptors.request.use((config) => {
       }
     }
   } catch (e) {
-    // ignore in non-browser environments
+    /* ignore non-browser */
   }
   return config;
 }, (error) => Promise.reject(error));
 
-export default api;
+import { api } from './api';
 
-Select-String -Path server\**\*.js -Pattern "register","signup" -List
+export const post = (path, data, opts = {}) => api.post(path, data, opts);
+export const get = (path, opts = {}) => api.get(path, opts);
+export const put = (path, data, opts = {}) => api.put(path, data, opts);
+export const del = (path, opts = {}) => api.delete(path, opts);
+
+export default api;

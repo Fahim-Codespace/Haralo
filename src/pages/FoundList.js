@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react';
 import { get } from '../utils/requests';
-import { useEffect, useState } from 'react';
 
-const YourComponent = () => {
+const FoundList = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
@@ -10,7 +10,10 @@ const YourComponent = () => {
         const res = await get('/api/report-found');
         if (res && res.status === 200) setItems(res.data || []);
         else setItems([]);
-      } catch (err) { console.error('Load found items', err); setItems([]); }
+      } catch (err) {
+        console.error('Load found items', err);
+        setItems([]);
+      }
     };
     load();
   }, []);
@@ -22,4 +25,4 @@ const YourComponent = () => {
   );
 };
 
-export default YourComponent;
+export default FoundList;
