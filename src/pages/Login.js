@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import styles from "../css/SignUP.module.css";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { post } from '../utils/requests';
+import { post, get } from '../utils/requests';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import connectDb from '../db/connect.js';
@@ -60,6 +60,19 @@ const Login = () => {
             setIsLoading(false);
         }
     };
+
+    // Example usage of get request
+    useEffect(() => {
+        async function load() {
+            try {
+                const res = await get('/api/report-found');
+                // handle the response data as needed
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        load();
+    }, []);
 
     return (
         <div className={styles.pageContainer}>
