@@ -1,133 +1,108 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
-import styles from "../css/SignUP.module.css";
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { post, get } from '../utils/requests';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import connectDb from '../db/connect.js';
-
-const RUNTIME = (typeof window !== 'undefined' && window.__BACKEND_URL__) ? window.__BACKEND_URL__ : null;
-export const BASE = (RUNTIME || process.env.REACT_APP_API_URL || '').replace(/\/+$/, '');
-export const api = axios.create({ baseURL: BASE || '', timeout: 15000, headers: { 'Content-Type': 'application/json' } });
+import Button from 'react-bootstrap/Button';
+import { post } from '../utils/requests'; // use the requests wrapper
+import styles from "../css/SignUP.module.css";
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        email: "",
-        password: ""
-    });
-    const [message, setMessage] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setMessage("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
 
-        try {
-            // declare response variable returned from API
-            const res = await post('/api/student/login', {
-                email: formData.email,
-                password: formData.password,
-            });
+    try {
+      // ensure response variable is declared
+      const response = await post('/api/student/login', {
+        email: formData.email,
+        password: formData.password
+      });
 
-            // check response and use res.data
-            if (res && res.status === 200) {
-                const data = res.data || {};
-                if (data.token) localStorage.setItem('token', data.token);
-                if (data.email) localStorage.setItem('userEmail', data.email);
-                setMessage("Login successful!");
-                setFormData({ email: "", password: "" });
-                navigate('/');
-                return;
-            }
+      // use response instead of an undefined `res`
+      if (response && response.status === 200) {
+        const token = response.data?.token;
+        if (token) localStorage.setItem('token', token);
+        setMessage("Login successful!");
+        setFormData({ email: "", password: "" });
+        navigate('/');
+        return;
+      }
 
-            // fallback message
-            setMessage(res?.data?.message || "Login failed");
-        } catch (err) {
-            console.error("Login error:", err);
-            setMessage(err.response?.data?.message || err.message || "Something went wrong. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      setMessage(response?.data?.message || "Login failed");
+    } catch (err) {
+      console.error("Login error:", err);
+      setMessage(err.response?.data?.message || err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    // Example usage of get request
-    useEffect(() => {
-        async function load() {
-            try {
-                const res = await get('/api/report-found');
-                // handle the response data as needed
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        load();
-    }, []);
-
-    return (
-        <div className={styles.pageContainer}>
-            <div className={styles.gradientArea}>
-                <div className={styles.centeredContent}>
-                    <div style={{ width: '480px', minHeight: '340px', margin: '32px auto', background: 'rgba(255,255,255,0.95)', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', padding: '32px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <h2 style={{ marginBottom: '24px', fontWeight: 700, color: '#2c3e50' }}>Login</h2>
-                        <Form onSubmit={handleSubmit}>
-                            <Form.Group className="mb-3" controlId="formEmail">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control 
-                                    type="email" 
-                                    placeholder="Enter email" 
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    disabled={isLoading}
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formPassword">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control 
-                                    type="password" 
-                                    placeholder="Password" 
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                    disabled={isLoading}
-                                />
-                            </Form.Group>
-                            <Button variant="primary" type="submit" disabled={isLoading}>
-                                {isLoading ? 'Logging in...' : 'Login'}
-                            </Button>
-                        </Form>
-                        {message && (
-                            <p style={{ 
-                                marginTop: "10px", 
-                                color: message.includes("successful") ? "green" : "red",
-                                fontWeight: message.includes("successful") ? "bold" : "normal"
-                            }}>
-                                {message}
-                            </p>
-                        )}
-                        <div style={{ marginTop: "16px" }}>
-                            <span>Don't have an account? </span>
-                            <Link to="/sign-up">Sign Up</Link>
-                        </div>
-                    </div>
-                </div>
+  return (
+    <div className={styles.pageContainer}>
+      <div className={styles.gradientArea}>
+        <div className={styles.centeredContent}>
+          <div style={{ width: '480px', minHeight: '340px', margin: '32px auto', background: 'rgba(255,255,255,0.95)', borderRadius: '16px', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', padding: '32px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <h2 style={{ marginBottom: '24px', fontWeight: 700, color: '#2c3e50' }}>Login</h2>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="formEmail">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control 
+                  type="email" 
+                  placeholder="Enter email" 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  disabled={isLoading}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="formPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control 
+                  type="password" 
+                  placeholder="Password" 
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  disabled={isLoading}
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Login'}
+              </Button>
+            </Form>
+            {message && (
+              <p style={{ 
+                marginTop: "10px", 
+                color: message.includes("successful") ? "green" : "red",
+                fontWeight: message.includes("successful") ? "bold" : "normal"
+              }}>
+                {message}
+              </p>
+            )}
+            <div style={{ marginTop: "16px" }}>
+              <span>Don't have an account? </span>
+              <Link to="/sign-up">Sign Up</Link>
             </div>
-            <Footer />
+          </div>
         </div>
-    );
+      </div>
+      <Footer />
+    </div>
+  );
 };
 
 export default Login;
