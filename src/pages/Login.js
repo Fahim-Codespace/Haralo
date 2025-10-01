@@ -31,27 +31,30 @@ const Login = () => {
         e.preventDefault();
         setIsLoading(true);
         setMessage("");
+
         try {
-            const { email, password } = formData;
-            await post('/api/student/login', { email, password });
-            
-            setMessage("Login successful!");
-            
-            // Save JWT token to localStorage
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token);
+            // declare response variable returned from API
+            const res = await post('/api/student/login', {
+                email: formData.email,
+                password: formData.password,
+            });
+
+            // check response and use res.data
+            if (res && res.status === 200) {
+                const data = res.data || {};
+                if (data.token) localStorage.setItem('token', data.token);
+                if (data.email) localStorage.setItem('userEmail', data.email);
+                setMessage("Login successful!");
+                setFormData({ email: "", password: "" });
+                navigate('/');
+                return;
             }
-            
-            // Save user email to localStorage
-            if (res.data.email) {
-                localStorage.setItem('userEmail', res.data.email);
-            }
-            
-            // Redirect to home page
-            navigate('/');
+
+            // fallback message
+            setMessage(res?.data?.message || "Login failed");
         } catch (err) {
             console.error("Login error:", err);
-            setMessage(err.response?.data?.message || err.message || "Something went wrong");
+            setMessage(err.response?.data?.message || err.message || "Something went wrong. Please try again.");
         } finally {
             setIsLoading(false);
         }
