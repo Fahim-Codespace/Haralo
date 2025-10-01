@@ -20,6 +20,18 @@ function AboutUs() {
     fetchData();
   }, []);
 
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await get('/api/about'); // adjust endpoint if needed
+        if (res && res.status === 200) setData(res.data);
+      } catch (err) {
+        console.error('About fetch', err);
+      }
+    };
+    load();
+  }, []);
+
   return (
     <div>
       <Navigation />
@@ -35,10 +47,18 @@ function AboutUs() {
         </div>
         <div className="goal">
           <h2>Our Goals</h2>
-          <p>Our goal is to create a platform that connects people who have lost items with those who have found them, making it easier to reunite lost belongings with their owners.
-          We aim to foster a community of trust and support, where individuals can help each other in times of need, ensuring that lost items find their way back home.
-          Through our platform, we strive to reduce the stress and frustration associated with losing personal belongings, providing a simple and effective solution for both finders and owners.
-          We believe in the power of community and aim to build a network where everyone can contribute to helping others, making the world a little bit better, one lost item at a time.
+          <p>
+            Our goal is to create a platform that connects people who have lost
+            items with those who have found them, making it easier to reunite lost
+            belongings with their owners. We aim to foster a community of trust
+            and support, where individuals can help each other in times of need,
+            ensuring that lost items find their way back home. Through our
+            platform, we strive to reduce the stress and frustration associated
+            with losing personal belongings, providing a simple and effective
+            solution for both finders and owners. We believe in the power of
+            community and aim to build a network where everyone can contribute to
+            helping others, making the world a little bit better, one lost item
+            at a time.
           </p>
         </div>
       </div>

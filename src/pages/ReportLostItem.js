@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../css/ReportLostItem.css';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
-import { api } from '../utils/api';
+import { post } from '../utils/requests';
 
 function ReportLostItem() {
   const [form, setForm] = useState({
@@ -25,45 +25,18 @@ function ReportLostItem() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const uploadForm = new FormData();
+      if (form.photo) uploadForm.append('photo', form.photo);
       let photoUrl = '';
-      const token = localStorage.getItem('token');
-
       if (form.photo) {
-        const uploadForm = new FormData();
-        uploadForm.append('photo', form.photo);
-
-        const upResp = await api.post('/api/uploads/gridfs/upload', uploadForm, {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-          },
-        });
-        photoUrl = upResp.data?.fileUrl || '';
+        const up = await post('/api/uploads/gridfs/upload', uploadForm, { headers: { 'Content-Type': 'multipart/form-data' } });
+        photoUrl = up.data?.fileUrl || '';
       }
-
-      const payload = {
-        item: form.item,
-        location: form.location,
-        date: form.date,
-        description: form.description,
-        contact: form.contact,
-        photo: photoUrl,
-      };
-
-      const res = await api.post('/api/report-lost', payload, {
-        headers: { Authorization: token ? `Bearer ${token}` : '' },
-      });
-
-      if (res.status >= 200 && res.status < 300) {
-        alert('Item reported successfully!');
-        setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null });
-      } else {
-        console.error('Report failed', res);
-        alert('Error reporting item.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Server error.');
-    }
+      const payload = { item: form.item, location: form.location, date: form.date, description: form.description, contact: form.contact, photo: photoUrl };
+      const res = await post('/api/report-lost', payload);
+      if (res && res.status >= 200 && res.status < 300) { alert('Reported'); setForm({ item: '', location: '', date: '', description: '', contact: '', photo: null }); }
+      else alert(res?.data?.message || 'Report failed');
+    } catch (err) { console.error(err); alert(err?.response?.data?.message || err.message || 'Server error'); }
   };
 
   return (

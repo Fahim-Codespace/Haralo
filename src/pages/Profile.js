@@ -122,6 +122,30 @@ function Profile() {
     }
   };
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await get('/api/student/profile');
+        if (res && res.status === 200) setProfile(res.data);
+        else console.warn('Profile fetch:', res?.data);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        // show message if needed
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  // update handler
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await put('/api/student/profile', updateData);
+      if (res && res.status >= 200 && res.status < 300) alert('Profile updated');
+      else alert(res?.data?.message || 'Update failed');
+    } catch (err) { console.error(err); alert(err?.response?.data?.message || err.message || 'Server error'); }
+  };
+
   return (
     <div className={styles.pageContainer}>
       <Navigation />
