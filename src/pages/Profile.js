@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import styles from '../css/SignUP.module.css';
-import axios from 'axios';
-import { get, put } from '../utils/requests';
+import { get, post, put, del } from '../utils/requests';
+import axios from 'axios'; // <-- add this import
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -14,8 +14,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
+  const apiUrl = process.env.REACT_APP_API_URL;
+  
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userEmail = localStorage.getItem('userEmail');
