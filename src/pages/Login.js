@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { post } from '../utils/requests';
+
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 import Form from 'react-bootstrap/Form';

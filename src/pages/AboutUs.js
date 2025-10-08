@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { get, put, post } from '../utils/requests';
 import { useNavigate, Link } from 'react-router-dom';
 import Navigation from '../components/navigation';
 import Footer from '../components/footer';
 import '../css/AboutUs.css';
-import api from '../utils/api';
+
+import { api } from './api';
+
+export const post = (path, data, opts = {}) => api.post(path, data, opts);
+export const get = (path, opts = {}) => api.get(path, opts);
+export const put = (path, data, opts = {}) => api.put(path, data, opts);
+export const del = (path, opts = {}) => api.delete(path, opts);
 
 const teamMembers = [
   { name: 'Jaliz Mahamud Mridul', img: '/images/mridul.jpg' },
